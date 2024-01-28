@@ -6,9 +6,8 @@ https://googlemaps.github.io/google-maps-services-python/docs/index.html#googlem
 import googlemaps
 from datetime import datetime
 import pandas as pd
-from latitude_longitude_test import get_lati_longi
-from driving_distance_test import get_dist_dur
 from typing import Any
+import requests
 
 api_key = 'AIzaSyCr1A8C-25fFAWtGudA3xfIzbswAEGTWWQ'
 
@@ -109,3 +108,86 @@ def sort_dataframe(df: pd.DataFrame, parameter: str) -> pd.DataFrame:
     :return: Dataframe sorted by given parameter
     """
     return df.sort_values(by=parameter)
+
+def get_dist_dur(api_key, start, end):
+
+    base_url = "https://maps.googleapis.com/maps/api/distancematrix/json"
+
+    params = {
+
+        "origins": start,
+
+        "destinations": end,
+
+        "key": api_key
+
+    }
+
+
+
+    response = requests.get(base_url, params=params)
+
+
+
+    if response.status_code == 200:
+
+        data = response.json()
+
+        if data["status"] == "OK":
+
+            distance = data["rows"][0]["elements"][0]["distance"]["text"]
+
+            duration = data["rows"][0]["elements"][0]["duration"]["text"]
+
+            return distance, duration
+
+        else:
+
+            print("Request failed.")
+
+            return None, None
+
+    else:
+
+        print("Failed to make the request.")
+
+        return None, None
+
+def get_lati_longi(api_key, address):
+    url = 'https://maps.googleapis.com/maps/api/geocode/json'
+
+    params = {
+
+        "address": address,
+
+        "key": api_key
+
+    }
+
+    response = requests.get(url, params=params)
+
+    if response.status_code == 200:
+
+        data = response.json()
+
+        if data["status"] == "OK":
+
+            location = data["results"][0]["geometry"]["location"]
+
+            lat = location["lat"]
+
+            lng = location["lng"]
+
+            return lat, lng
+
+        else:
+
+            print(f"Error: {data['error_message']}")
+
+            return 0, 0
+
+    else:
+
+        print("Failed to make the request.")
+
+        return 0, 0
