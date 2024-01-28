@@ -9,7 +9,7 @@ import pandas as pd
 from typing import Any
 import requests
 
-api_key = 'AIzaSyCr1A8C-25fFAWtGudA3xfIzbswAEGTWWQ'
+api_key = 'MY API HERE'
 
 gmaps = googlemaps.Client(key=api_key)
 
